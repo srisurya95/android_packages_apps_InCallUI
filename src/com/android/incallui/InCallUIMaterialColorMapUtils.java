@@ -17,7 +17,11 @@ public class InCallUIMaterialColorMapUtils extends MaterialColorMapUtils {
         sPrimaryColors = resources.obtainTypedArray(
                 com.android.incallui.R.array.background_colors);
         sSecondaryColors = resources.obtainTypedArray(
+<<<<<<< HEAD
                 com.android.incallui.R.array.background_colors_dark);
+=======
+                com.android.contacts.common.R.array.background_colors_dark);
+>>>>>>> f660ae9... In Multi-SIM cases use the color of the SIM icon for InCallUI.
         mResources = resources;
     }
 
@@ -28,7 +32,11 @@ public class InCallUIMaterialColorMapUtils extends MaterialColorMapUtils {
      */
     @Override
     public MaterialPalette calculatePrimaryAndSecondaryColor(int color) {
+<<<<<<< HEAD
         if (color == PhoneAccount.NO_HIGHLIGHT_COLOR) {
+=======
+        if (color == PhoneAccount.NO_COLOR) {
+>>>>>>> f660ae9... In Multi-SIM cases use the color of the SIM icon for InCallUI.
             return getDefaultPrimaryAndSecondaryColors(mResources);
         }
 

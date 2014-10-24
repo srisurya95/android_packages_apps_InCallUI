@@ -41,6 +41,7 @@ import android.view.WindowManager;
 import com.google.common.base.Preconditions;
 
 import com.android.contacts.common.interactions.TouchPointManager;
+import com.android.contacts.common.util.MaterialColorMapUtils;
 import com.android.contacts.common.util.MaterialColorMapUtils.MaterialPalette;
 import com.android.incalluibind.ObjectFactory;
 
@@ -187,6 +188,7 @@ public class InCallPresenter implements CallList.Listener, InCallPhoneListener {
 
     private Phone mPhone;
     private int mLastDisconnectCause = DisconnectCause.ERROR;
+
 
     private Handler mHandler = new Handler();
 
@@ -1485,22 +1487,30 @@ public class InCallPresenter implements CallList.Listener, InCallPhoneListener {
      * and a secondary color.
      */
     public void setThemeColors() {
-        // This method will set the background to default if the color is PhoneAccount.NO_COLOR.
-        mThemeColors = getColorsFromCall(CallList.getInstance().getFirstCall());
 
         if (mInCallActivity == null) {
             return;
         }
 
+        Call call = CallList.getInstance().getFirstCall();
+        TelecomManager tm = getTelecomManager();
+
+        int color = PhoneAccount.NO_COLOR;
+
+        if (call != null && tm != null && tm.hasMultipleCallCapableAccounts()) {
+            PhoneAccount account = tm.getPhoneAccount(call.getAccountHandle());
+            if (account != null) {
+                color = account.getColor();
+            }
+        }
+
+        // This method will set the background to default if the color is PhoneAccount.NO_COLOR.
+        mThemeColors = new InCallUIMaterialColorMapUtils(mContext.getResources()).
+                calculatePrimaryAndSecondaryColor(color);
+
         mInCallActivity.getWindow().setStatusBarColor(mThemeColors.mSecondaryColor);
     }
 
-    /**
-     * @return A palette for colors to display in the UI.
-     */
-    public MaterialPalette getThemeColors() {
-        return mThemeColors;
-    }
 
     private MaterialPalette getColorsFromCall(Call call) {
         return getColorsFromPhoneAccountHandle(call == null ? null : call.getAccountHandle());
@@ -1525,12 +1535,19 @@ public class InCallPresenter implements CallList.Listener, InCallPhoneListener {
     }
 
     /**
+     * @return A palette for colors to display in the UI.
+     */
+    public MaterialPalette getThemeColors() {
+        return mThemeColors;
+    }
+
+    /**
      * @return An instance of TelecomManager.
      */
-    public TelecomManager getTelecomManager() {
+    private TelecomManager getTelecomManager() {
         if (mTelecomManager == null) {
             mTelecomManager = (TelecomManager)
-                    mContext.getSystemService(Context.TELECOM_SERVICE);
+                    mInCallActivity.getSystemService(Context.TELECOM_SERVICE);
         }
         return mTelecomManager;
     }

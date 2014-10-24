@@ -58,7 +58,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.contacts.common.util.MaterialColorMapUtils.MaterialPalette;
 import com.android.contacts.common.widget.FloatingActionButtonController;
 import com.android.incallui.service.PhoneNumberService;
@@ -889,6 +888,21 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
     @Override
     public boolean isManageConferenceVisible() {
         return mManageConferenceCallButton.getVisibility() == View.VISIBLE;
+
+	/**
+     * Get the overall InCallUI background colors and apply to call card.
+     */
+    public void updateColors() {
+        MaterialPalette themeColors = InCallPresenter.getInstance().getThemeColors();
+
+        if (mCurrentThemeColors != null && mCurrentThemeColors.equals(themeColors)) {
+            return;
+        }
+
+        mPrimaryCallCardContainer.setBackgroundColor(themeColors.mPrimaryColor);
+        mCallButtonsContainer.setBackgroundColor(themeColors.mPrimaryColor);
+
+        mCurrentThemeColors = themeColors;
     }
 
     /**
@@ -918,8 +932,7 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
         }
     }
 
-    public void animateForNewOutgoingCall(final Point touchPoint,
-            final boolean showCircularReveal) {
+    public void animateForNewOutgoingCall(final Point touchPoint) {
         final ViewGroup parent = (ViewGroup) mPrimaryCallCardContainer.getParent();
 
         final ViewTreeObserver observer = getView().getViewTreeObserver();
@@ -953,6 +966,10 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
 
                 final Animator animator = getOutgoingCallAnimator(touchPoint,
                         parent.getHeight(), originalHeight, showCircularReveal);
+                final Animator revealAnimator = getRevealAnimator(touchPoint);
+                final Animator shrinkAnimator =
+                        getShrinkAnimator(parent.getHeight(), originalHeight);
+
 
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override

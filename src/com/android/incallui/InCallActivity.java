@@ -33,6 +33,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -254,6 +255,7 @@ public class InCallActivity extends Activity {
         mIsForegroundActivity = true;
 
         InCallPresenter.getInstance().setThemeColors();
+
         InCallPresenter.getInstance().onUiShowing(true);
 
         if (mShowDialpadRequested) {
@@ -575,6 +577,7 @@ public class InCallActivity extends Activity {
                     }
                 }
 
+<<<<<<< HEAD
                 // This is only true in the case where an outgoing call is initiated by tapping
                 // on the "Select account dialog", in which case we skip the initial animation. In
                 // most other cases the circular reveal is done by OutgoingCallAnimationActivity.
@@ -586,6 +589,24 @@ public class InCallActivity extends Activity {
                 // is no way of making it (i.e. no valid call capable accounts)
                 if (InCallPresenter.isCallWithNoValidAccounts(call)) {
                     TelecomAdapter.getInstance().disconnectCall(call.getId());
+=======
+                mCallCardFragment.animateForNewOutgoingCall(touchPoint);
+
+                /*
+                 * If both a phone account handle and a list of phone accounts to choose from are
+                 * missing, then disconnect the call because there is no way to place an outgoing
+                 * call.
+                 * The exception is emergency calls, which may be waiting for the ConnectionService
+                 * to set the PhoneAccount during the PENDING_OUTGOING state.
+                 */
+                if (call != null && !isEmergencyCall(call)) {
+                    final List<PhoneAccountHandle> phoneAccountHandles = extras
+                            .getParcelableArrayList(android.telecom.Call.AVAILABLE_PHONE_ACCOUNTS);
+                    if (call.getAccountHandle() == null &&
+                            (phoneAccountHandles == null || phoneAccountHandles.isEmpty())) {
+                        TelecomAdapter.getInstance().disconnectCall(call.getId());
+                    }
+>>>>>>> f660ae9... In Multi-SIM cases use the color of the SIM icon for InCallUI.
                 }
 
                 dismissKeyguard(true);

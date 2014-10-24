@@ -45,8 +45,10 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="bottom|center_horizontal"
-        android:baselineAligned="false">
+        android:paddingStart="@dimen/button_cluster_horizontal_padding"
+        android:paddingEnd="@dimen/button_cluster_horizontal_padding"
+        android:gravity="bottom|center_horizontal">
+
 
         <!-- This row only ever shows either 4 or 5 buttons. This may depend on whether the device
              supports "Hold" (i.e. 4 buttons on CDMA devices, 5 buttons on GSM devices.) or whether
