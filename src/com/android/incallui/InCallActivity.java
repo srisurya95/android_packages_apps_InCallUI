@@ -304,6 +304,7 @@ public class InCallActivity extends Activity {
     @Override
     protected void onDestroy() {
         Log.d(this, "onDestroy()...  this = " + this);
+        unregisterReceiver(mReceiver);
         InCallPresenter.getInstance().unsetActivity(this);
         super.onDestroy();
     }
