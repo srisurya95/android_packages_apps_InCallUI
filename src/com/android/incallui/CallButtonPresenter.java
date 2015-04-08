@@ -77,6 +77,7 @@ public class CallButtonPresenter extends Presenter<CallButtonPresenter.CallButto
         InCallPresenter.getInstance().removeIncomingCallListener(this);
         InCallPresenter.getInstance().removeDetailsListener(this);
         CallList.getInstance().removeActiveSubChangeListener(this);
+        InCallPresenter.getInstance().removeCanAddCallListener(this);
         InCallPresenter.getInstance().getInCallCameraManager().removeCameraSelectionListener(this);
     }
 
