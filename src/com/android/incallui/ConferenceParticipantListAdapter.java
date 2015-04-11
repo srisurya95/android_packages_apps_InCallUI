@@ -18,7 +18,7 @@ package com.android.incallui;
 
 import android.content.Context;
 import android.net.Uri;
-import android.telecom.PhoneCapabilities;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Adapter for a ListView containing conference call participant information.
@@ -336,11 +335,10 @@ public class ConferenceParticipantListAdapter extends BaseAdapter {
                     new ContactLookupCallback(this));
         }
 
-        int callCapabilities = call.getTelecommCall().getDetails().getCallCapabilities();
-        boolean thisRowCanSeparate = mParentCanSeparate && PhoneCapabilities.can(
-                callCapabilities, PhoneCapabilities.SEPARATE_FROM_CONFERENCE);
-        boolean thisRowCanDisconnect = PhoneCapabilities.can(
-                callCapabilities, PhoneCapabilities.DISCONNECT_FROM_CONFERENCE);
+        boolean thisRowCanSeparate = mParentCanSeparate && call.getTelecommCall().getDetails().can(
+                android.telecom.Call.Details.CAPABILITY_SEPARATE_FROM_CONFERENCE);
+        boolean thisRowCanDisconnect = call.getTelecommCall().getDetails().can(
+                android.telecom.Call.Details.CAPABILITY_DISCONNECT_FROM_CONFERENCE);
 
         setCallerInfoForRow(result, contactCache.name, contactCache.number, contactCache.label,
                 contactCache.lookupKey, contactCache.displayPhotoUri, thisRowCanSeparate,
@@ -420,7 +418,7 @@ public class ConferenceParticipantListAdapter extends BaseAdapter {
             numberTypeTextView.setVisibility(View.GONE);
         } else {
             numberTextView.setVisibility(View.VISIBLE);
-            numberTextView.setText(callerNumber);
+            numberTextView.setText(PhoneNumberUtils.ttsSpanAsPhoneNumber(callerNumber));
             numberTypeTextView.setVisibility(View.VISIBLE);
             numberTypeTextView.setText(callerNumberType);
         }
